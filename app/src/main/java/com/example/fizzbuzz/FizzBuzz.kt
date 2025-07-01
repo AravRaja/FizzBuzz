@@ -8,7 +8,7 @@ fun addFezz(res: MutableList<String> ) {
     var count = 0
     for (i in res){
 
-        if ((!isFezzAdded) && (i != "Fizz")){
+        if (i != "Fizz"){
             res.add(count, "Fezz")
             isFezzAdded = true
             break
