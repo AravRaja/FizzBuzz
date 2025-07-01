@@ -31,9 +31,13 @@ fun main() {
 
     }
     */
+
+
     //SOLUTION 2
-    val res = mutableListOf<String>() //res represent the result of any certain number
+    val res = mutableListOf<String>() // res represent the result of any certain number
+    // Loops through numbers and constructs res which will be the output depending on the conditions
     for (i in 1..255){
+
         res.removeAll(res)
         if (i%3 ==0) res.add("Fizz")
         if (i%5 ==0) res.add("Buzz")
