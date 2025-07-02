@@ -48,18 +48,25 @@ fun main() {
     */
 
     //SOLUTION 2
-    var a = 0
-    println("Enter an integer greater than or equal to 1:")
-    while (a == 0) {
+    var maxNum = 0
+    println("Enter an integer greater than or equal to 1 to be the maximum number in your fizzbuzz sequence")
+    while (maxNum == 0) {
         val input: String? = readlnOrNull()
         try {
-            a = input!!.toInt()
+            maxNum = input!!.toInt()
         } catch (e: NumberFormatException) {
             println("Please enter only valid integers greater than or equal 1, make sure you only use digits and no floats!")
-
         }
     }
-    for (i in 1..a){
+
+    println("Which rules would you like to use ")
+    println("Type 'a' to use all the rules")
+    println("If you want to only use partial rules type the number that represents the rule separated by a comma")
+    println("E.G 3,5,13,17")
+    println("RULES AVAILABLE: [3, 5, 7, 11, 13, 17]")
+
+
+    for (i in 1..maxNum){
        println(numClassifier(i))
     }
 
