@@ -18,18 +18,20 @@ fun addFezz(res: MutableList<String> ) {
     }
 }
 
-fun numClassifier(i: Int): String{
+fun numClassifier(i: Int, rules: MutableList<Int>): String{
+    if (0 in rules) return i.toString()
+
     val res = mutableListOf<String>() // res represent the result of any certain number
     //constructs res which will be the output depending on the conditions
-    if (i%3 ==0) res.add("Fizz")
-    if (i%5 ==0) res.add("Buzz")
-    if (i%7 == 0) res.add("Bang")
-    if (i%11 == 0) {
+    if (i%3 ==0 && (3 in rules)) res.add("Fizz")
+    if (i%5 ==0 && (5 in rules)) res.add("Buzz")
+    if (i%7 == 0 && (7 in rules)) res.add("Bang")
+    if (i%11 == 0 && (11 in rules)) {
         res.removeAll(res)
         res.add("Bong")
     }
-    if (i%13 == 0) addFezz(res)
-    if (i%17 ==0) res.reverse()
+    if (i%13 == 0 && (13 in rules)) addFezz(res)
+    if (i%17 ==0 && (17 in rules)) res.reverse()
     if (res.isEmpty()) res.add(i.toString())
 
     return (res.joinToString(separator = ""))
@@ -61,13 +63,34 @@ fun main() {
 
     println("Which rules would you like to use ")
     println("Type 'a' to use all the rules")
+    println("Type 'e' to use no rules")
     println("If you want to only use partial rules type the number that represents the rule separated by a comma")
     println("E.G 3,5,13,17")
     println("RULES AVAILABLE: [3, 5, 7, 11, 13, 17]")
+    val rules = mutableListOf<Int>()
+    while(rules.isEmpty()){
+        val input: String = readln()
+        if (input.lowercase() == "a") rules.addAll(arrayOf(3,5,7,11,13,17))
+        if (input.lowercase() == "e") rules.add(0)
+        if (rules.isEmpty()) {
+            try {
+                for(i in input.replace(" ", "").split(',').toSet()){
+                    if (i.toInt() in arrayOf(3,5,7,11,13,17)) rules.add(i.toInt())
+                    else throw(Exception("Invalid Input"))
+                }
+
+
+            } catch (e: Exception) {
+                println("Make sure your input is valid and only the numbers [3, 5, 7, 11, 13, 17] separated by commas with no spaces")
+                println("PLEASE TRY AGAIN:")
+                rules.removeAll(rules)
+            }
+        }
+    }
 
 
     for (i in 1..maxNum){
-       println(numClassifier(i))
+       println(numClassifier(i, rules))
     }
 
 }
