@@ -82,6 +82,19 @@ fun main() {
             }
         }
     }
+    var allRulesAdded = false
+    val customRules = mutableMapOf<Int, String>()
+    while (!allRulesAdded){
+        println("Would you like to add other custom rules?")
+        println("answer with 'y' for yes and any other string for no")
+        val input: String = readln()
+        if (input.lowercase() != "y") allRulesAdded = true
+        else{
+           println("NK")
+        }
+
+    }
+
 
 
     for (i in 1..maxNum){
