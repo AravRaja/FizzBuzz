@@ -1,5 +1,11 @@
 package com.example.fizzbuzz
 
+data class Rule(
+    val num: Int,
+    val word: String = "",
+    val modifier: String = "",
+    val order: Int = 0
+)
 
 fun addFezzBeforeWordsStartingWithB(wordList: MutableList<String> ) {
     var count = 0
@@ -62,15 +68,24 @@ fun main() {
     println("If you want to only use partial rules type the number that represents the rule separated by a comma")
     println("E.G 3,5,13,17")
     println("RULES AVAILABLE: [3, 5, 7, 11, 13, 17]")
-    val rules = mutableListOf<Int>()
+
+    val initialRules = mapOf<Int, Rule>(
+        3 to Rule(num = 3, word = "Fizz", order = 1),
+        5 to Rule(num = 5, word = "Buzz", order = 2),
+        7 to Rule(num = 7, word = "Bang", order = 3),
+        11 to Rule(num = 11, word = "Bong", modifier = "destroyEarlier", order = 4),
+        13 to Rule(num = 13 , word = "Fezz", modifier = "placeWordBeforeB", order = 5),
+        15 to Rule(num = 15, modifier = "reverse", order = 6)
+    )
+    val rules = mutableListOf<Rule>()
     while(rules.isEmpty()){
         val input: String = readln()
-        if (input.lowercase() == "a") rules.addAll(arrayOf(3,5,7,11,13,17))
-        if (input.lowercase() == "e") rules.add(0)
+        if (input.lowercase() == "a") rules.addAll(initialRules.values)
+        if (input.lowercase() == "e") rules.add(Rule(0))
         if (rules.isEmpty()) {
             try {
-                for(i in input.replace(" ", "").split(',').toSet()){
-                    if (i.toInt() in arrayOf(3,5,7,11,13,17)) rules.add(i.toInt())
+                for(i in input.replace(" ", "").split(',').toSet().toList().sorted()){
+                    if (i.toInt() in initialRules.keys) initialRules[i.toInt()]?.let { rules.add(it) }
                     else throw(Exception("Invalid Input"))
                 }
 
@@ -83,18 +98,32 @@ fun main() {
         }
     }
     var allRulesAdded = false
-    val customRules = mutableMapOf<Int, String>()
+    val customRules = mutableMapOf<String, Int>()
+    if (3 in rules) customRules["Fizz"] = 3
+    if (5 in rules) customRules["Buzz"] = 5
+    if (7 in rules) customRules["Bang"] = 7
     while (!allRulesAdded){
         println("Would you like to add other custom rules?")
         println("answer with 'y' for yes and any other string for no")
-        val input: String = readln()
-        if (input.lowercase() != "y") allRulesAdded = true
+        if (readln().lowercase() != "y") allRulesAdded = true
         else{
-           println("NK")
+            println("To enter a custom rule enter the target Integer separated by a comma and then the target String.")
+            println("E.g '19,Splosh' ")
+            try{
+                val wordArr = readln().replace(" ", "").split(',', limit = 2)
+                println(wordArr)
+                if (wordArr.last() in customRules.keys){
+                    println("This String is already in use with number: ${customRules[wordArr.last()]}")
+                    throw Exception("Duplicate Key")
+                }
+                customRules[wordArr.last()] = wordArr.first().toInt()
+            } catch (e: Exception){
+                println("Error in your formatting please try again!")
+            }
         }
 
     }
-
+    println(customRules)
 
 
     for (i in 1..maxNum){
