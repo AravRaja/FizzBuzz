@@ -1,39 +1,51 @@
 package com.example.fizzbuzz
 
+
+enum class Modifier {
+    REVERSE, BEFORE_B, DESTROY_EARLIER, NONE
+}
 data class Rule(
     val num: Int,
     val word: String = "",
-    val modifier: String = "",
-    val order: Int = 0
+    val modifier: Modifier = Modifier.NONE
 )
 
-fun addFezzBeforeWordsStartingWithB(wordList: MutableList<String> ) {
+fun addBeforeWordsStartingWithB(word: String, wordList: MutableList<String> ) {
     var count = 0
     for (i in wordList){
 
         if (i.startsWith('B')){
-            wordList.add(count, "Fezz")
+            wordList.add(count, word)
             return
         }
         count += 1
     }
 
-    wordList.add("Fezz")
+    wordList.add(word)
 
 }
 
-fun numClassifier(i: Int, rules: MutableList<Int>): String{
-    if (0 in rules) return i.toString()
-
+fun numClassifier(i: Int, rules: MutableList<Rule>): String{
     val numberToWord = mutableListOf<String>()
-    if (i%11 == 0 && (11 in rules)) numberToWord.add("Bong")
-    else {
-        if (i % 3 == 0 && (3 in rules)) numberToWord.add("Fizz")
-        if (i % 5 == 0 && (5 in rules)) numberToWord.add("Buzz")
-        if (i % 7 == 0 && (7 in rules)) numberToWord.add("Bang")
+    for (rule: Rule in rules){
+        if (i%rule.num == 0 ){
+            if (rule.modifier == Modifier.REVERSE){
+                numberToWord.reverse()
+            }
+            if (rule.modifier == Modifier.BEFORE_B){
+                addBeforeWordsStartingWithB(rule.word, numberToWord)
+            }
+            if (rule.modifier == Modifier.DESTROY_EARLIER){
+                numberToWord.removeAll(numberToWord)
+                numberToWord.add(rule.word)
+            }
+            else{
+                numberToWord.add(rule.word)
+            }
+
+        }
+
     }
-    if (i%13 == 0 && (13 in rules)) addFezzBeforeWordsStartingWithB(numberToWord)
-    if (i%17 ==0 && (17 in rules)) numberToWord.reverse()
     if (numberToWord.isEmpty()) numberToWord.add(i.toString())
 
     return (numberToWord.joinToString(separator = ""))
@@ -52,14 +64,13 @@ fun main() {
     */
 
     //SOLUTION 2
-    var maxNum = 0
+
     println("Enter an integer greater than or equal to 1 to be the maximum number in your fizzbuzz sequence")
-    while (maxNum == 0) {
-        try {
-            maxNum = readln().toInt()
-        } catch (e: NumberFormatException) {
-            println("Please enter only valid integers greater than or equal 1, make sure you only use digits and no floats!")
-        }
+    var maxNum = readln().toIntOrNull()
+    while (maxNum == null) {
+        println("Please enter only valid integers greater than or equal 1, make sure you only use digits and no floats!")
+        maxNum = readln().toIntOrNull()
+
     }
 
     println("Which rules would you like to use ")
@@ -70,21 +81,21 @@ fun main() {
     println("RULES AVAILABLE: [3, 5, 7, 11, 13, 17]")
 
     val initialRules = mapOf<Int, Rule>(
-        3 to Rule(num = 3, word = "Fizz", order = 1),
-        5 to Rule(num = 5, word = "Buzz", order = 2),
-        7 to Rule(num = 7, word = "Bang", order = 3),
-        11 to Rule(num = 11, word = "Bong", modifier = "destroyEarlier", order = 4),
-        13 to Rule(num = 13 , word = "Fezz", modifier = "placeWordBeforeB", order = 5),
-        15 to Rule(num = 15, modifier = "reverse", order = 6)
+        3 to Rule(num = 3, word = "Fizz"),
+        5 to Rule(num = 5, word = "Buzz"),
+        7 to Rule(num = 7, word = "Bang"),
+        11 to Rule(num = 11, word = "Bong", modifier = Modifier.DESTROY_EARLIER),
+        13 to Rule(num = 13 , word = "Fezz", modifier = Modifier.BEFORE_B),
+        17 to Rule(num = 17, modifier = Modifier.REVERSE)
     )
     val rules = mutableListOf<Rule>()
     while(rules.isEmpty()){
         val input: String = readln()
         if (input.lowercase() == "a") rules.addAll(initialRules.values)
-        if (input.lowercase() == "e") rules.add(Rule(0))
-        if (rules.isEmpty()) {
+        if (input.lowercase() == "e") break
+        else {
             try {
-                for(i in input.replace(" ", "").split(',').toSet().toList().sorted()){
+                for(i in input.replace(" ", "").split(',').toSet()){
                     if (i.toInt() in initialRules.keys) initialRules[i.toInt()]?.let { rules.add(it) }
                     else throw(Exception("Invalid Input"))
                 }
@@ -98,32 +109,37 @@ fun main() {
         }
     }
     var allRulesAdded = false
-    val customRules = mutableMapOf<String, Int>()
-    if (3 in rules) customRules["Fizz"] = 3
-    if (5 in rules) customRules["Buzz"] = 5
-    if (7 in rules) customRules["Bang"] = 7
+    rules.sortBy { it.num }
+
+
     while (!allRulesAdded){
         println("Would you like to add other custom rules?")
         println("answer with 'y' for yes and any other string for no")
         if (readln().lowercase() != "y") allRulesAdded = true
         else{
-            println("To enter a custom rule enter the target Integer separated by a comma and then the target String.")
-            println("E.g '19,Splosh' ")
-            try{
-                val wordArr = readln().replace(" ", "").split(',', limit = 2)
-                println(wordArr)
-                if (wordArr.last() in customRules.keys){
-                    println("This String is already in use with number: ${customRules[wordArr.last()]}")
-                    throw Exception("Duplicate Key")
-                }
-                customRules[wordArr.last()] = wordArr.first().toInt()
-            } catch (e: Exception){
-                println("Error in your formatting please try again!")
+            println("First Enter the number for your rule (e.g '8') ")
+            var input: Int? = readln().toIntOrNull()
+            while(input == null) {
+                input = readln().toIntOrNull()
+                println("Make sure to format your integer as a singular integer with no decimal points!")
             }
+            val num: Int = input
+            println("Now decide the modifiers you would like to use: type '1' for reverse, 2 for 'placeBeforeB', 3 for 'destroyEarlier' and 4 (or anything else) for No Modifiers")
+            input = readln().toIntOrNull()
+            var modifier: Modifier = Modifier.NONE
+            if (input == 1) modifier = Modifier.REVERSE
+            else if (input == 2) modifier = Modifier.BEFORE_B
+            else if (input == 3) modifier = Modifier.DESTROY_EARLIER
+            var word = ""
+            if (modifier != Modifier.REVERSE) {
+                println("Next decide the String to connect to the rule")
+                word = readln()
+            }
+            rules.add( Rule(num = num, word = word, modifier = modifier ))
         }
 
     }
-    println(customRules)
+    println(rules)
 
 
     for (i in 1..maxNum){
