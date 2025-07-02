@@ -1,7 +1,5 @@
 package com.example.fizzbuzz
 
-
-
 //Function that takes the output res and adds Fezz in the correct place before any B-word
 fun addFezz(res: MutableList<String> ) {
     var isFezzAdded = false
@@ -50,8 +48,17 @@ fun main() {
     */
 
     //SOLUTION 2
-    val input = readlnOrNull()
-    val a = input!!.toInt()
+    var a = 0
+    println("Enter an integer greater than or equal to 1:")
+    while (a == 0) {
+        val input: String? = readlnOrNull()
+        try {
+            a = input!!.toInt()
+        } catch (e: NumberFormatException) {
+            println("Please enter only valid integers greater than or equal 1, make sure you only use digits and no floats!")
+
+        }
+    }
     for (i in 1..a){
        println(numClassifier(i))
     }
