@@ -19,6 +19,23 @@ fun addFezz(res: MutableList<String> ) {
         res.add("Fezz")
     }
 }
+
+fun numClassifier(i: Int): String{
+    val res = mutableListOf<String>() // res represent the result of any certain number
+    //constructs res which will be the output depending on the conditions
+    if (i%3 ==0) res.add("Fizz")
+    if (i%5 ==0) res.add("Buzz")
+    if (i%7 == 0) res.add("Bang")
+    if (i%11 == 0) {
+        res.removeAll(res)
+        res.add("Bong")
+    }
+    if (i%13 == 0) addFezz(res)
+    if (i%17 ==0) res.reverse()
+    if (res.isEmpty()) res.add(i.toString())
+
+    return (res.joinToString(separator = ""))
+}
 fun main() {
 
     //SOLUTION 1
@@ -32,25 +49,11 @@ fun main() {
     }
     */
 
-
     //SOLUTION 2
-    val res = mutableListOf<String>() // res represent the result of any certain number
-    // Loops through numbers and constructs res which will be the output depending on the conditions
-    for (i in 1..255){
-
-        res.removeAll(res)
-        if (i%3 ==0) res.add("Fizz")
-        if (i%5 ==0) res.add("Buzz")
-        if (i%7 == 0) res.add("Bang")
-        if (i%11 == 0) {
-            res.removeAll(res)
-            res.add("Bong")
-        }
-        if (i%13 == 0) addFezz(res)
-        if (i%17 ==0) res.reverse()
-        if (res.isEmpty()) println(i)
-        else println(res.joinToString(separator = ""))
-
+    val input = readlnOrNull()
+    val a = input!!.toInt()
+    for (i in 1..a){
+       println(numClassifier(i))
     }
 
 }
